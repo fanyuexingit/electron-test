@@ -28,6 +28,10 @@ const createWindow = () => {
       Menu.setApplicationMenu(menu)
 
     win.loadFile('index.html')
+
+
+    // Open the DevTools.
+  mainWindow.webContents.openDevTools()
 }
 
 function createMenu () {
