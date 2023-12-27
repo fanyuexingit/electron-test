@@ -31,7 +31,7 @@ const createWindow = () => {
 
 
     // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+    win.webContents.openDevTools()
 }
 
 function createMenu () {
@@ -78,6 +78,24 @@ app.whenReady().then(() => {
     ipcMain.on('counter-value', (_event, value) => {
         console.log(value) // will print value to Node console
       })
+
+    // 在主进程中，我们接收端口对象。
+    ipcMain.on('port', (event) => {
+    // 当我们在主进程中接收到 MessagePort 对象, 它就成为了
+    // MessagePortMain.
+    const port = event.ports[0]
+  
+    // MessagePortMain 使用了 Node.js 风格的事件 API, 而不是
+    // web 风格的事件 API. 因此使用 .on('message', ...) 而不是 .onmessage = ...
+    port.on('message', (event) => {
+      // 收到的数据是： { answer: 42 }
+      const data = event.data
+      console.log(data)
+    })
+  
+    // MessagePortMain 阻塞消息直到 .start() 方法被调用
+    port.start()
+  })
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
